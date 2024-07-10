@@ -143,7 +143,7 @@ const Customer: React.FC = () => {
                                         <td>
                                             <button
                                                 onClick={() => {
-                                                    if (confirm('are you sure?')) {
+                                                    if (confirm('Are you sure?')) {
                                                         deleteCustomer(customer._id)
                                                     }
                                                 }}

@@ -1,11 +1,23 @@
-function MinQtyCard() {
+interface ProductProps {
+    name: string,
+    description: string,
+    image: string,
+}
+
+function MinQtyCard(props: ProductProps) {
+    const truncateText = (text:string, maxLength:number) => {
+        if (text.length <= maxLength) {
+            return text;
+        }
+        return text.substring(0, maxLength) + '...';
+    };
+
     return (
         <div className="card" style={{ width: "100%", marginBottom: "10px" }}>
-            <img src="..." className="card-img-top" alt="..." />
+            <img src={props.image} className="card-img-top" alt="..." />
             <div className="card-body">
-                <h5 className="card-title">Card title</h5>
-                <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="#" className="btn btn-primary">Go somewhere</a>
+                <h5 className="card-title">{props.name}</h5>
+                <p className="card-text"> {truncateText(props.description, 60)}</p>
             </div>
         </div>
     )
