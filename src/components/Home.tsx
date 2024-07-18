@@ -30,6 +30,7 @@ const Home: React.FC = () => {
     const findAllProducts = async () => {
         const response = await axios.get('http://localhost:3000/api/v1/products/find-all-min');
         setProudcts(response.data);
+        console.log(response.data)
     }
 
     const findAllCount = async () => {

@@ -4,7 +4,8 @@ import Home from './components/Home';
 import Customer from './components/Customer';
 import Product from './components/Product';
 import Order from './components/Order';
-import Income from './components/Income';
+import Login from './components/Login';
+import Signup from './components/Signup';
 
 function App() {
 
@@ -34,7 +35,7 @@ function App() {
                   <Link className="nav-link" to={'/order'}>Order</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to={'/income'}>Income</Link>
+                  <Link className="nav-link" to={'/login'}>Login</Link>
                 </li>
               </ul>
             </div>
@@ -46,7 +47,8 @@ function App() {
           <Route path='/customer' element={<Customer />} />
           <Route path='/product' element={<Product />} />
           <Route path='/order' element={<Order />} />
-          <Route path='/income' element={<Income />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/signup' element={<Signup />} />
         </Routes>
       </div>
     </Router>
