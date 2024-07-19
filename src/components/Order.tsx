@@ -1,4 +1,4 @@
-import axios from "axios";
+import AxiosInstance from "../config/axiosInstance.ts";
 import React, { useEffect, useState } from "react";
 
 interface Customer {
@@ -60,26 +60,24 @@ const Order: React.FC = () => {
     };
 
     const findAllCustomers = async () => {
-        const response = await axios.get('http://localhost:3000/api/v1/customers/find-all?searchText=&page=1&size=10');
+        const response = await AxiosInstance.get('/customers/find-all?searchText=&page=1&size=10');
         setCustomers(response.data);
-        console.log(response.data);
     }
 
     const findAllProducts = async () => {
-        const response = await axios.get('http://localhost:3000/api/v1/products/find-all?searchText=&page=1&size=10');
+        const response = await AxiosInstance.get('/products/find-all?searchText=&page=1&size=10');
         setProducts(response.data);
-        console.log(response.data);
     }
 
     const getCustomerById = async (id: string) => {
-        const customer = await axios.get('http://localhost:3000/api/v1/customers/find-by-id/' + id);
+        const customer = await AxiosInstance.get('/customers/find-by-id/' + id);
         setSelectedCustomer(customer.data);
         setAddress(customer.data.address);
         setSalary(customer.data.salary ? parseFloat(customer.data.salary) : '');
     }
 
     const getProductById = async (id: string) => {
-        const product = await axios.get('http://localhost:3000/api/v1/products/find-by-id/' + id);
+        const product = await AxiosInstance.get('/products/find-by-id/' + id);
         setSelectedProduct(product.data);
         setDescription(product.data.description);
         setUnitPrice(product.data.unitPrice ? parseFloat(product.data.unitPrice) : '');
@@ -87,7 +85,7 @@ const Order: React.FC = () => {
     }
 
     const saveOrder = async () => {
-        await axios.post('http://localhost:3000/api/v1/orders/create', {
+        await AxiosInstance.post('/orders/create', {
             date: new Date(),
             customerDetails: selectedCustomer,
             totalCost: netTotal,

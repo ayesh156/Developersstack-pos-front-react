@@ -1,4 +1,4 @@
-import axios from "axios";
+import AxiosInstance from "../config/axiosInstance.ts";
 import React, { useEffect, useState } from "react";
 import {Modal} from 'react-bootstrap';
 
@@ -34,10 +34,9 @@ const Customer: React.FC = () => {
     const updateCustomer = async () =>{
         try {
 
-            const response = await axios.put('http://localhost:3000/api/v1/customers/update/'+selectedCustomerId,{
+            await AxiosInstance.put('/customers/update/'+selectedCustomerId,{
                 fullName:updateName,address:updateAddress,salary:updateSalary
             });
-            console.log(response);
             handleClose();
             findAllCustomers('');
 
@@ -47,18 +46,17 @@ const Customer: React.FC = () => {
     }
 
     const findAllCustomers = async (e: any) => {
-        const response = await axios.get(`http://localhost:3000/api/v1/customers/find-all?searchText=${e}&page=1&size=10`);
+        const response = await AxiosInstance.get(`/customers/find-all?searchText=${e}&page=1&size=10`);
         setCustomers(response.data);
-        console.log(response.data);
     }
 
     const deleteCustomer = async (id: string) => {
-        await axios.delete('http://localhost:3000/api/v1/customers/delete-by-id/' + id);
+        await AxiosInstance.delete('/customers/delete-by-id/' + id);
         findAllCustomers('');
     }
 
     const loadModal = async (id: string) => {
-        const customer = await axios.get('http://localhost:3000/api/v1/customers/find-by-id/' + id);
+        const customer = await AxiosInstance.get('/customers/find-by-id/' + id);
         setModalState(true);
         setSelectedCustomerId(customer.data._id);
         setUpdateName(customer.data.fullName);
@@ -71,10 +69,9 @@ const Customer: React.FC = () => {
 
         try{
 
-            const response = await axios.post('http://localhost:3000/api/v1/customers/create',{
+            const response = await AxiosInstance.post('/customers/create',{
                  fullName:name,address,salary
              });
-             console.log(response);
   
             setName('');
             setSalary('');

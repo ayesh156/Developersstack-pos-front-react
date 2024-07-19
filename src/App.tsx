@@ -6,6 +6,7 @@ import Product from './components/Product';
 import Order from './components/Order';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import Calculator from './components/Calculator';
 
 function App() {
 
@@ -37,6 +38,9 @@ function App() {
                 <li className="nav-item">
                   <Link className="nav-link" to={'/login'}>Login</Link>
                 </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to={'/calc'}>Calculator</Link>
+                </li>
               </ul>
             </div>
           </div>
@@ -49,6 +53,7 @@ function App() {
           <Route path='/order' element={<Order />} />
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
+          <Route path='/calc' element={<Calculator />} />
         </Routes>
       </div>
     </Router>

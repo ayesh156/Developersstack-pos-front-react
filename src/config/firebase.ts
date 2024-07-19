@@ -1,22 +1,21 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getStorage } from "firebase/storage";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
+import "firebase/compat/storage";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBmViwY0RaGTMfBtyuiRAm-qmsF_DGus1Y",
-  authDomain: "react-pos-1108d.firebaseapp.com",
-  projectId: "react-pos-1108d",
-  storageBucket: "react-pos-1108d.appspot.com",
-  messagingSenderId: "673686862915",
-  appId: "1:673686862915:web:b3279b241a598bf169e8f6",
-  measurementId: "G-69DVSP1J50"
+  apiKey: process.env.VITE_FIREBASE_API_KEY,
+  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.VITE_FIREBASE_APP_ID,
+  measurementId: process.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const storage = getStorage(app);
-export default storage;
+if(!firebase.apps.length){
+  firebase.initializeApp(firebaseConfig)
+}
+
+export const storage = firebase.storage();
+export default firebase;

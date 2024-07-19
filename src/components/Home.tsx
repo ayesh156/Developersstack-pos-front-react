@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import DefaultCard from "./cards/DefaultCard";
 import DefaultChart from "./cards/DefaultChart";
 import MinQtyCard from "./cards/MinQtyCard";
-import axios from "axios";
+import AxiosInstance from "../config/axiosInstance.ts";
 
 interface Proudct {
     _id: string,
@@ -28,22 +28,21 @@ const Home: React.FC = () => {
     }, []);
 
     const findAllProducts = async () => {
-        const response = await axios.get('http://localhost:3000/api/v1/products/find-all-min');
+        const response = await AxiosInstance.get('/products/find-all-min');
         setProudcts(response.data);
-        console.log(response.data)
     }
 
     const findAllCount = async () => {
-        const productsCount = await axios.get('http://localhost:3000/api/v1/products/find-count');
+        const productsCount = await AxiosInstance.get('/products/find-count');
         setProudctCount(productsCount.data);
 
-        const customersCount = await axios.get('http://localhost:3000/api/v1/customers/find-count');
+        const customersCount = await AxiosInstance.get('/customers/find-count');
         setCustomerCount(customersCount.data);
 
-        const ordersCount = await axios.get('http://localhost:3000/api/v1/orders/find-count');
+        const ordersCount = await AxiosInstance.get('/orders/find-count');
         setOrderCount(ordersCount.data);
 
-        const totalIncome = await axios.get('http://localhost:3000/api/v1/orders/find-income');
+        const totalIncome = await AxiosInstance.get('/orders/find-income');
         setTotalIncome(totalIncome.data);
     }
 

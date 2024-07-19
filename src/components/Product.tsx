@@ -1,7 +1,7 @@
-import axios from "axios";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import AxiosInstance from "../config/axiosInstance.ts";
+import React, {  useEffect, useRef, useState } from "react";
 import { Modal } from 'react-bootstrap';
-// import storage from '../config/firebase'
+import {storage} from '../config/firebase'
 
 interface Proudct {
     _id: string,
@@ -16,6 +16,17 @@ const Product: React.FC = () => {
 
     const [proudcts, setProudcts] = useState<Proudct[]>([])
     const [image, setImage] = useState<File | null>(null);
+    const [uImage, setUImage] = useState<File | null>(null);
+
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+    const handleFile = async (event:React.ChangeEvent<HTMLInputElement>)=>{
+        setImage(event.target.files?event.target.files[0]:null);
+    }
+
+    const handleUpdateFile = async (event:React.ChangeEvent<HTMLInputElement>)=>{
+        setUImage(event.target.files?event.target.files[0]:null);
+    }
 
     const [modalState, setModalState] = useState<boolean>(false);
     const [viewModalState, setViewModalState] = useState<boolean>(false);
@@ -32,29 +43,26 @@ const Product: React.FC = () => {
     const [updateUnitPrice, setUpdateUnitPrice] = useState<number | ''>('');
     const [updateQtyOnHand, setUpdateQtyOnHand] = useState<number | ''>('');
 
-    const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            setImage(e.target.files[0]);
-        }
-    }
-
     const handleClose = () => setModalState(false);
     const viewClose = () => setViewModalState(false);
 
     const saveProduct = async () => {
-        const imageUrl = 'images/Samsung-S20.jpg';
-        // if(image){
-        //     const storageRef = storage.ref(`images/${Math.random()+'-'+image.name}`);
-        //     storageRef.put(image).then(()=>{
-        //         storageRef.getDownloadURL().then((url)=>{
-        //             console.log(url);
-        //         })
-        //     })
-        // }
+        let imageUrl = '';
+        if(image){
+            try{
+                const storageRef = storage.ref();
+                const imageRef = storageRef.child(`images/${Math.random()+'-'+image.name}`);
+                const snapshot = await imageRef.put(image);
+                imageUrl = await snapshot.ref.getDownloadURL();
+            }catch(err){
+                console.log(err);
+            }
+
+        }
 
         try {
 
-            await axios.post('http://localhost:3000/api/v1/products/create', {
+            await AxiosInstance.post('/products/create', {
                 name, description, image: imageUrl, unitPrice, qtyOnHand
             });
 
@@ -62,6 +70,11 @@ const Product: React.FC = () => {
             setDescription('');
             setQtyOnHand('');
             setUnitPrice('');
+
+            // Clear the file input value
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
 
             findAllProducts('');
 
@@ -75,18 +88,17 @@ const Product: React.FC = () => {
     }, []);
 
     const findAllProducts = async (e: any) => {
-        const response = await axios.get(`http://localhost:3000/api/v1/products/find-all?searchText=${e}&page=1&size=10`);
+        const response = await AxiosInstance.get(`/products/find-all?searchText=${e}&page=1&size=10`);
         setProudcts(response.data);
-        console.log(response.data);
     }
 
     const deleteProduct = async (id: string) => {
-        await axios.delete('http://localhost:3000/api/v1/Products/delete-by-id/' + id);
+        await AxiosInstance.delete('/Products/delete-by-id/' + id);
         findAllProducts('');
     }
 
     const loadModal = async (id: string) => {
-        const product = await axios.get('http://localhost:3000/api/v1/products/find-by-id/' + id);
+        const product = await AxiosInstance.get('/products/find-by-id/' + id);
         setSelectedProductId(product.data._id);
         setUpdateName(product.data.name);
         setUpdateImage(product.data.image);
@@ -97,13 +109,23 @@ const Product: React.FC = () => {
     }
 
     const updateProduct = async () => {
-        const imageUrl = 'images/Samsung-S20.jpg';
+        let imageUrl2 = '';
+        if(uImage){
+            try{
+                const storageRef = storage.ref();
+                const imageRef = storageRef.child(`images/${Math.random()+'-'+uImage.name}`);
+                const snapshot = await imageRef.put(uImage);
+                imageUrl2 = await snapshot.ref.getDownloadURL();
+            }catch(err){
+                console.log(err);
+            }
+
+        }
         try {
 
-            const response = await axios.put('http://localhost:3000/api/v1/products/update/' + selectedProductId, {
-                name: updateName, description: updateDescription, image: imageUrl, qtyOnHand: updateQtyOnHand, unitPrice: updateUnitPrice
+            await AxiosInstance.put('/products/update/' + selectedProductId, {
+                name: updateName, description: updateDescription, image: imageUrl2, qtyOnHand: updateQtyOnHand, unitPrice: updateUnitPrice
             });
-            console.log(response);
             handleClose();
             findAllProducts('');
 
@@ -135,10 +157,10 @@ const Product: React.FC = () => {
                             <input type="number" value={qtyOnHand} onChange={(e) => setQtyOnHand(parseFloat(e.target.value))} className="form-control" id="qty" />
                         </div>
                     </div>
-                    <div className="col-12 col-sm-6 col-md-4 mb-2">
+                    <div className="col-12 mb-2">
                         <div className="form-group">
                             <label htmlFor="image">Product Image</label>
-                            <input type="file" className="form-control" id="image" />
+                            <input ref={fileInputRef} onChange={handleFile} type="file" className="form-control" id="image" />
                         </div>
                     </div>
                     <div className="col-12 mb-2">
@@ -212,6 +234,11 @@ const Product: React.FC = () => {
                 <Modal.Body>
                     <div className="col-12 mb-3">
                         <img src={updateImage} alt={updateImage} width={"100%"} />
+                    </div>
+                    <div className="col-12 mb-3">
+                        <div className="form-group">
+                            <input onChange={handleUpdateFile} type="file" className="form-control" id="image" />
+                        </div>
                     </div>
                     <div className="col-12 mb-3">
                         <div className="form-group">

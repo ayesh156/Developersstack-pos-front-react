@@ -1,3 +1,4 @@
+import AxiosInstance from "../config/axiosInstance.ts";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -6,11 +7,28 @@ const Login: React.FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const login=()=>{
-        console.log(email);
-        console.log(password);
-        setEmail('');
-        setPassword('');
+    const login= async ()=>{
+        try {
+
+            const response = await AxiosInstance.post('/users/login', {
+                email,  password,
+            });
+
+            //=====================
+            const expirationDate = new Date();
+            expirationDate.setDate(expirationDate.getDate()+2);
+
+            const cookieValue = encodeURIComponent('token')+'='
+                +encodeURIComponent(response.data)+'; expires='+expirationDate.toUTCString()+'; path=/';
+
+            document.cookie = cookieValue;
+            
+            setEmail('');
+            setPassword('');
+
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     return (
